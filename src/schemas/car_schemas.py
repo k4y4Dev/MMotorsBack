@@ -9,6 +9,11 @@ class CarBase(BaseModel):
 class CarCreate(CarBase):
     pass
 
+class CarUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=50)
+    price: int | None = Field(default=None)
+    km: int | None = Field(default=None)
+
 class CarResponse(CarBase):
     model_config = ConfigDict(fron_attributes=True)
 

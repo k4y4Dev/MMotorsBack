@@ -3,3 +3,4 @@
 **\.env
 fly.toml
 .venv/
+*.db
