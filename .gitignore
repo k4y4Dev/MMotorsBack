@@ -3,3 +3,4 @@ __pycache__
 fly.toml
 .venv/
 *.db
+seed.py

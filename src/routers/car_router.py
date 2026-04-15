@@ -41,6 +41,7 @@ async def update_car_full(car_id: int, car_data: CarCreate, db: Annotated[Sessio
     car.name = car_data.name
     car.price = car_data.price
     car.km = car_data.km
+    car.image = car_data.image
 
     db.commit()
     db.refresh(car)
@@ -87,7 +88,8 @@ async def create_car(car: CarCreate, db: Annotated[Session, Depends(get_db)]):
     new_car = car_model.Car (
         name= car.name,
         price= car.price,
-        km= car.km
+        km= car.km,
+        image= car.image
     )
 
     db.add(new_car)

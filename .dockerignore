@@ -4,3 +4,4 @@
 fly.toml
 .venv/
 *.db
+seed.py

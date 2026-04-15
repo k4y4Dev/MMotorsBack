@@ -14,3 +14,4 @@ class Car(Base):
     name: Mapped[str] = mapped_column(String(50), nullable=False)
     price: Mapped[int] = mapped_column(Integer)
     km: Mapped[int] = mapped_column(Integer)
+    image: Mapped[str] = mapped_column(String(50))

@@ -4,6 +4,7 @@ class CarBase(BaseModel):
     name: str = Field(min_length=1, max_length=50)
     price: int 
     km: int 
+    image: str = Field(min_length=1, max_length=50)
 
 
 class CarCreate(CarBase):
@@ -13,6 +14,8 @@ class CarUpdate(BaseModel):
     name: str | None = Field(default=None, min_length=1, max_length=50)
     price: int | None = Field(default=None)
     km: int | None = Field(default=None)
+    image: str | None = Field(default=None, min_length=1, max_length=50)
+    
 
 class CarResponse(CarBase):
     model_config = ConfigDict(fron_attributes=True)
