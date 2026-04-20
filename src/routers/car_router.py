@@ -1,29 +1,24 @@
 from typing import Annotated
 from fastapi import APIRouter, HTTPException, status, Depends
 
-
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from src.schemas.car_schemas import CarCreate, CarResponse, CarUpdate
-from src.models import car_model
+from src.models.car_model import Car
 from src.config.database import Base, engine, get_db
+from src.service.query_service import get_item_by_id, get_all, item_updater, item_setter
 
 
 router = APIRouter()
 
 @router.get("", response_model=list[CarResponse])
 async def get_all_cars(db: Annotated[Session, Depends(get_db)]):
-    result = db.execute(select(car_model.Car))
-    cars = result.scalars().all()
-    return cars
+    return get_all(db, Car)
 
 @router.get("/{car_id}", response_model=CarResponse)
 async def get_car(car_id: int, db: Annotated[Session, Depends(get_db)]):
-    result = db.execute(
-        select(car_model.Car).where(car_model.Car.id == car_id)
-    )
-    car = result.scalars().first()
+    car = get_item_by_id(db, Car, car_id)
     if car:
         return car
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Car not found")
@@ -31,17 +26,11 @@ async def get_car(car_id: int, db: Annotated[Session, Depends(get_db)]):
 
 @router.put("/{car_id}", response_model=CarResponse)
 async def update_car_full(car_id: int, car_data: CarCreate, db: Annotated[Session, Depends(get_db)]):
-    result = db.execute(
-        select(car_model.Car).where(car_model.Car.id == car_id)
-    )
-    car = result.scalars().first()
+    car = get_item_by_id(db, Car, car_id)
     if not car:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Car not found")
     
-    car.name = car_data.name
-    car.price = car_data.price
-    car.km = car_data.km
-    car.image = car_data.image
+    item_updater(car_data, car, False)
 
     db.commit()
     db.refresh(car)
@@ -50,29 +39,19 @@ async def update_car_full(car_id: int, car_data: CarCreate, db: Annotated[Sessio
 
 @router.patch("/{car_id}", response_model=CarResponse)
 async def update_car_partial(car_id: int, car_data: CarUpdate, db: Annotated[Session, Depends(get_db)]):
-    result = db.execute(
-        select(car_model.Car).where(car_model.Car.id == car_id)
-    )
-    car = result.scalars().first()
+    car = get_item_by_id(db, Car, car_id)
     if not car:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Car not found")
     
-    updated_data = car_data.model_dump(exclude_unset=True)
-    for field, value in updated_data.items():
-        setattr(car, field, value)
+    item_updater(car_data, car, True)
     
-
-
     db.commit()
     db.refresh(car)
     return car
 
 @router.delete("/{car_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_car(car_id: int, db: Annotated[Session, Depends(get_db)]):
-    result = db.execute(
-        select(car_model.Car).where(car_model.Car.id == car_id)
-    )
-    car = result.scalars().first()
+    car = get_item_by_id(db, Car, car_id)
     if not car:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Car not found")
     
@@ -84,13 +63,8 @@ async def delete_car(car_id: int, db: Annotated[Session, Depends(get_db)]):
     response_model=CarResponse,
     status_code=status.HTTP_201_CREATED
 )
-async def create_car(car: CarCreate, db: Annotated[Session, Depends(get_db)]):
-    new_car = car_model.Car (
-        name= car.name,
-        price= car.price,
-        km= car.km,
-        image= car.image
-    )
+async def create_car(carSchema: CarCreate, db: Annotated[Session, Depends(get_db)]):
+    new_car = item_setter(carSchema, Car)
 
     db.add(new_car)
     db.commit()

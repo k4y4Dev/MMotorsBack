@@ -6,8 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from src.schemas.car_schemas import CarCreate, CarResponse, CarUpdate
-from src.models import car_model
+
 from src.config.database import Base, engine, SessionLocal
 from src.config.seed import seed
 
