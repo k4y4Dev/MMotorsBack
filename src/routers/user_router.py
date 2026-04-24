@@ -14,7 +14,8 @@ from src.service.query_service import get_item_by_id, get_all, item_updater, ite
 from datetime import timedelta
 from fastapi.security import OAuth2PasswordRequestForm
 
-from src.service.auth_py import create_access_token, hash_password, oauth2_scheme, verify_access_token, verify_password
+from src.service.auth_py import create_access_token, hash_password, oauth2_scheme, verify_access_token, verify_password, CurrentUser
+
 
 router = APIRouter()
 
@@ -22,12 +23,12 @@ router = APIRouter()
 async def get_all_users(db: Annotated[Session, Depends(get_db)]):
     return get_all(db, User)
 
-@router.get("/me", response_model=UserPrivate)
+""" @router.get("/me", response_model=UserPrivate)
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
     db: Annotated[Session, Depends(get_db)],
 ):
-    """Get the currently authenticated user."""
+    ""Get the currently authenticated user.""
     user_id = verify_access_token(token)
     if user_id is None:
         raise HTTPException(
@@ -56,7 +57,17 @@ async def get_current_user(
             detail="User not found",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    return user
+    return user """
+
+
+""" 2nd version """
+@router.get("/me", response_model=UserPrivate)
+async def get_current_user(
+    current_user:CurrentUser
+):
+    return current_user
+
+
 
 @router.get("/{user_id}", response_model=UserPublic)
 async def get_user(user_id: int, db: Annotated[Session, Depends(get_db)]):

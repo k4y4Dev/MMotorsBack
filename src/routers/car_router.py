@@ -9,6 +9,8 @@ from src.models.car_model import Car
 from src.config.database import Base, engine, get_db
 from src.service.query_service import get_item_by_id, get_all, item_updater, item_setter
 
+from src.service.auth_py import CurrentUser
+
 
 router = APIRouter()
 
@@ -50,10 +52,18 @@ async def update_car_partial(car_id: int, car_data: CarUpdate, db: Annotated[Ses
     return car
 
 @router.delete("/{car_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_car(car_id: int, db: Annotated[Session, Depends(get_db)]):
+async def delete_car(car_id: int,current_user: CurrentUser , db: Annotated[Session, Depends(get_db)]):
+
     car = get_item_by_id(db, Car, car_id)
     if not car:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Car not found")
+    
+    
+    if current_user.email != "admin1@gmail.com":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to update this post",
+        )
     
     db.delete(car)
     db.commit()
@@ -63,7 +73,7 @@ async def delete_car(car_id: int, db: Annotated[Session, Depends(get_db)]):
     response_model=CarResponse,
     status_code=status.HTTP_201_CREATED
 )
-async def create_car(carSchema: CarCreate, db: Annotated[Session, Depends(get_db)]):
+async def create_car(carSchema: CarCreate,current_user: CurrentUser , db: Annotated[Session, Depends(get_db)]):
     new_car = item_setter(carSchema, Car)
 
     db.add(new_car)
