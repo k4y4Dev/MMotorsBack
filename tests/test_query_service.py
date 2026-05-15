@@ -1,11 +1,11 @@
 
 from src.service.query_service import get_item_by_id, get_all, item_setter, item_updater
-from .conftest import TestingSessionLocal
+
 from .entity_test import MockBase, MockSchema
 
-db = TestingSessionLocal()
 
-def test_get_item_by_id():
+
+def test_get_item_by_id(db):
     response = get_item_by_id(db, MockBase, 50)
     fail_response = get_item_by_id(db, MockBase, 46)
     fail_response2 = get_item_by_id(db, MockBase, "a")
@@ -19,7 +19,7 @@ def test_get_item_by_id():
 
     assert fail_response2 is None
 
-def test_get_all():
+def test_get_all(db):
     response = get_all(db, MockBase)
 
     assert len(response) > 0
@@ -32,7 +32,7 @@ def test_item_setter():
     assert response.name == "Mock-Sama"
     assert response.price == 777
 
-def test_item_updater():
+def test_item_updater(db):
     response = get_item_by_id(db, MockBase, 50)
     assert response is not None
     assert response.name == "Test"
@@ -46,4 +46,3 @@ def test_item_updater():
     assert response_updated.price == 666
 
 
-db.close()

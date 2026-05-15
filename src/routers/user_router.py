@@ -1,17 +1,18 @@
 from typing import Annotated
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends, Response
+from fastapi.responses import JSONResponse
 
 from sqlalchemy.orm import Session
 from sqlalchemy import func, select
 
-from src.schemas.user_schemas import UserCreate, UserPublic, UserUpdate, UserPrivate
+from src.schemas.user_schemas import UserCreate, UserPublic, UserUpdate, UserPrivate, LoginResponseModel
 from src.schemas.token_schemas import Token
 from src.models.user_model import User
 from src.config.database import Base, engine, get_db
 from config import settings
 from src.service.query_service import get_item_by_id, get_all, item_updater, item_setter
 
-from datetime import timedelta
+from datetime import timedelta, datetime, timezone
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src.service.auth_py import create_access_token, hash_password, oauth2_scheme, verify_access_token, verify_password, CurrentUser
@@ -91,7 +92,7 @@ async def update_user_full(user_id: int, user_data: UserCreate, db: Annotated[Se
 
 @router.patch("/{user_id}", response_model=UserPrivate)
 async def update_user_partial(user_id: int, user_data: UserUpdate, db: Annotated[Session, Depends(get_db)]):
-    user = get_item_by_id(db, user, user_id)
+    user = get_item_by_id(db, User, user_id)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="user not found")
     
@@ -102,10 +103,22 @@ async def update_user_partial(user_id: int, user_data: UserUpdate, db: Annotated
     return user
 
 @router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_user(user_id: int, db: Annotated[Session, Depends(get_db)]):
+async def delete_user(
+    user_id: int,
+    current_user: CurrentUser, 
+    db: Annotated[Session, Depends(get_db)]):
+
+
+
     user = get_item_by_id(db, User, user_id)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="user not found")
+    
+    if current_user.email not in ('admin1@gmail.com', 'admin2@gmail.com'):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to delete this user",
+        )
     
     db.delete(user)
     db.commit()
@@ -150,10 +163,11 @@ async def create_user(user: UserCreate, db: Annotated[Session, Depends(get_db)])
     return new_user
 
 
-@router.post("/token", response_model=Token)
+@router.post("/token", response_model=LoginResponseModel)
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Annotated[Session, Depends(get_db)],
+    response: Response
 ):
     # Look up user by email (case-insensitive)
     # Note: OAuth2PasswordRequestForm uses "username" field, but we treat it as email
@@ -179,4 +193,24 @@ async def login_for_access_token(
         data={"sub": str(user.id)},
         expires_delta=access_token_expires,
     )
-    return Token(access_token=access_token, token_type="bearer")
+
+    expire_date = datetime.now(timezone.utc) + timedelta(minutes=settings.access_token_expire_minutes)
+    max_age_seconds = settings.access_token_expire_minutes * 360
+
+    response.set_cookie(
+        key="auth_token",
+        value=access_token,
+        httponly=True,
+        samesite="lax",
+        secure=False,
+        expires=expire_date,
+        max_age=max_age_seconds,
+        domain="localhost"
+        
+    )
+    return {
+        "message": f"Bienvenue {user.email}",
+        "user": {
+            "email": user.email
+        }
+    }

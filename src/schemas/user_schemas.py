@@ -15,8 +15,12 @@ class UserPublic(BaseModel):
     ##image_file: str | None
     ##image_path: str
 
-class UserPrivate(UserPublic):
+class UserPrivate(BaseModel):
     email: EmailStr
+
+class LoginResponseModel(BaseModel):
+    message: str
+    user: UserPrivate
 
 
 class UserUpdate(BaseModel):

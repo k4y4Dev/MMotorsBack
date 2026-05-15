@@ -62,7 +62,7 @@ async def delete_car(car_id: int,current_user: CurrentUser , db: Annotated[Sessi
     if current_user.email != "admin1@gmail.com":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized to update this post",
+            detail="Not authorized to delete this post",
         )
     
     db.delete(car)
@@ -74,6 +74,12 @@ async def delete_car(car_id: int,current_user: CurrentUser , db: Annotated[Sessi
     status_code=status.HTTP_201_CREATED
 )
 async def create_car(carSchema: CarCreate,current_user: CurrentUser , db: Annotated[Session, Depends(get_db)]):
+
+    if current_user.email != "admin1@gmail.com":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to update this post",
+        )
     new_car = item_setter(carSchema, Car)
 
     db.add(new_car)

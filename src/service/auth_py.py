@@ -7,7 +7,7 @@ from pwdlib import PasswordHash
 from config import settings
 
 from typing import Annotated
-from fastapi import Depends, HTTPException , status
+from fastapi import Depends, HTTPException , status, Request
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -58,14 +58,21 @@ def verify_access_token(token: str) -> str | None :
     
 
 def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)],
+    request: Request,
     db: Annotated[Session, Depends(get_db)],
 ) -> User:
+    token = request.cookies.get("auth_token")
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication cookie missing",
+        )
+    
     user_id = verify_access_token(token)
     if user_id is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token",
+            detail="Unknown ID",
             headers={"WWW-Authenticate": "Bearer"},
         )
 

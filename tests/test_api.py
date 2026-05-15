@@ -1,12 +1,12 @@
 from sqlalchemy.orm import Session, declarative_base, Mapped, mapped_column
-from tests.conftest import client
 
 
 
 
 
 
-def test_read_root():
+
+def test_read_root(client):
     response = client.get("/")
     assert response.status_code == 200
     assert response.json() == {"Hello":"Test deploy CI/CD"}
@@ -17,8 +17,8 @@ def test_read_root():
 #     assert response.json() == {"Hello":"Test deploy CI/CD"}
 
 
-def test_create_car():
-    response = client.post(
+def test_create_car(admin_client):
+    response = admin_client.post(
         "/api/cars", json={
             "name": "Test Car", "price": 333, "km": 333, "image": "test.jpg"
         }
