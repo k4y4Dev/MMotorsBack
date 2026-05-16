@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from src.config.database import Base, engine, SessionLocal
 from src.config.seed import seed
 
-from src.routers import car_router
+from src.routers import car_router, user_router
 
 @asynccontextmanager
 async def lifespan(_app:FastAPI):
@@ -45,9 +45,16 @@ app.include_router(
     tags=["Cars"]
 )
 
+app.include_router(
+    user_router.router,
+    prefix="/api/users",
+    tags=["Users"]
+)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:4200"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
