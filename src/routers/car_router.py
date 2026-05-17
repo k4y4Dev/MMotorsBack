@@ -27,11 +27,16 @@ async def get_car(car_id: int, db: Annotated[Session, Depends(get_db)]):
 
 
 @router.put("/{car_id}", response_model=CarResponse)
-async def update_car_full(car_id: int, car_data: CarCreate, db: Annotated[Session, Depends(get_db)]):
+async def update_car_full(car_id: int, car_data: CarCreate, current_user: CurrentUser , db: Annotated[Session, Depends(get_db)]):
     car = get_item_by_id(db, Car, car_id)
     if not car:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Car not found")
     
+    if current_user.email != "admin1@gmail.com":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to delete this post",
+    )
     item_updater(car_data, car, False)
 
     db.commit()
