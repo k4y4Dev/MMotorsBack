@@ -10,7 +10,10 @@ class S3Service:
             's3',
             aws_access_key_id=settings.aws_access_key_id,
             aws_secret_access_key=settings.aws_secret_access_key,
-            region_name=settings.aws_region
+            region_name=settings.aws_region,
+            config=boto3.session.Config(
+                 signature_version='s3v4'
+            )
         )
         self.bucket = settings.aws_bucket_name
 
@@ -56,5 +59,12 @@ class S3Service:
             Bucket=self.bucket,
             Key=f"cars/{filename}"
         )
+
+    def generate_url(self, filename: str) -> str:
+        return self.s3.generate_presigned_url(
+        'get_object',
+        Params={'Bucket': self.bucket, 'Key': filename},
+        ExpiresIn=3600
+    )
 
 s3_service = S3Service()
