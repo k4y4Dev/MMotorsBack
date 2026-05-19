@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from src.config.database import Base, engine, SessionLocal
 from src.config.seed import seed
 
-from src.routers import car_router, user_router
+from src.routers import car_router, user_router, upload_router
 
 @asynccontextmanager
 async def lifespan(_app:FastAPI):
@@ -49,6 +49,12 @@ app.include_router(
     user_router.router,
     prefix="/api/users",
     tags=["Users"]
+)
+
+app.include_router(
+    upload_router.router,
+    prefix="/api/upload",
+    tags=["Upload"]
 )
 
 app.add_middleware(
