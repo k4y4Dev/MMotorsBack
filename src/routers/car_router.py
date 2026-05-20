@@ -1,22 +1,38 @@
 from typing import Annotated
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status, Depends, Query
 
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
-from src.schemas.car_schemas import CarCreate, CarResponse, CarUpdate
+from src.schemas.car_schemas import CarCreate, CarResponse, CarUpdate, PaginatedCarsResponse
 from src.models.car_model import Car
 from src.config.database import Base, engine, get_db
-from src.service.query_service import get_item_by_id, get_all, item_updater, item_setter
+from src.service.query_service import get_item_by_id, get_all, item_updater, item_setter, count_items, query_builder
 
 from src.service.auth_py import CurrentUser
 
 
 router = APIRouter()
 
-@router.get("", response_model=list[CarResponse])
-async def get_all_cars(db: Annotated[Session, Depends(get_db)]):
-    return get_all(db, Car)
+@router.get("", response_model=PaginatedCarsResponse)
+async def get_all_cars(
+    db: Annotated[Session, Depends(get_db)],
+    skip: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=1, le=100)] = 10,):
+
+    total = count_items(db, Car)
+    query:str = query_builder(Car, skip, limit)
+    cars = get_all(db, query)
+
+    has_more = skip + len(cars) < total
+
+    return PaginatedCarsResponse(
+        cars=[CarResponse.model_validate(car) for car in cars],
+        total=total,
+        skip=skip,
+        limit=limit,
+        has_more=has_more,
+    )
 
 @router.get("/{car_id}", response_model=CarResponse)
 async def get_car(car_id: int, db: Annotated[Session, Depends(get_db)]):
