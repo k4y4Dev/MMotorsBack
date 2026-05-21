@@ -1,4 +1,6 @@
-from typing import Type,TypeVar, Optional
+from typing import Type,TypeVar, Optional, Annotated
+from fastapi import Query
+from sqlalchemy import select, func
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -13,8 +15,7 @@ def get_item_by_id(db: Session, model: Type[TModel], item_id: int) -> Optional[T
     return result
 
 
-def get_all(db: Session, model: Type[TModel] ) -> list[TModel]:
-    query: str = select(model)
+def get_all(db: Session, query: str) -> list[TModel]:
     result = db.execute(query).scalars().all()
     return result
 
@@ -28,3 +29,15 @@ def item_setter(schema: TSchema, model: TModel):
     data = schema.model_dump()
     new_item = model(**data)
     return new_item
+
+def query_builder( 
+    model: Type[TModel],
+    skip: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=1, le=100)] = 1) -> str:
+    query = select(model).offset(skip).limit(limit)
+    return query
+
+def count_items(db: Session, model: Type[TModel]):
+    count_result = db.execute(select(func.count()).select_from(model))
+    total = count_result.scalar() or 0
+    return total

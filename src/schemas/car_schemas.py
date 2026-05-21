@@ -18,8 +18,16 @@ class CarUpdate(BaseModel):
     
 
 class CarResponse(CarBase):
-    model_config = ConfigDict(fron_attributes=True)
+    model_config = ConfigDict(from_attributes=True)
 
     id: int
     #date_posted: str
+
+
+class PaginatedCarsResponse(BaseModel):
+    cars: list[CarResponse]
+    total: int
+    skip: int
+    limit: int
+    has_more: bool
 
