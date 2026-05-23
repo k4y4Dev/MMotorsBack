@@ -54,7 +54,17 @@ def query_builder(
             query = query.where(model.trade == filters.trade)
     return query
 
-def count_items(db: Session, model: Type[TModel]):
-    count_result = db.execute(select(func.count()).select_from(model))
+def count_items(db: Session, model: Type[TModel], filters: Optional[TFilter] = None,):
+    query = select(model)
+    if isinstance(filters, CarFilter):
+        if filters.name is not None:
+            query = query.where(model.name.ilike(f"%{filters.name}%"))
+        if filters.price_max is not None:
+            query = query.where(model.price <= filters.price_max)
+        if filters.km_max is not None:
+            query = query.where(model.km <= filters.km_max)
+        if filters.trade is not None:
+            query = query.where(model.trade == filters.trade)
+    count_result = db.execute(select(func.count()).select_from(query))
     total = count_result.scalar() or 0
     return total

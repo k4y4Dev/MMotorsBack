@@ -23,9 +23,10 @@ async def get_all_cars(
     filters: CarFilter = Depends()
     ):
 
-    total = count_items(db, Car)
+
     query:str = query_builder(Car, skip, limit, filters)
     cars = get_all(db, query)
+    total = count_items(db, Car, filters)
 
     has_more = skip + len(cars) < total
 
