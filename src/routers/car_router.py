@@ -5,6 +5,7 @@ from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
 from src.schemas.car_schemas import CarCreate, CarResponse, CarUpdate, PaginatedCarsResponse
+from src.schemas.filter_schemas import CarFilter
 from src.models.car_model import Car
 from src.config.database import Base, engine, get_db
 from src.service.query_service import get_item_by_id, get_all, item_updater, item_setter, count_items, query_builder
@@ -18,11 +19,14 @@ router = APIRouter()
 async def get_all_cars(
     db: Annotated[Session, Depends(get_db)],
     skip: Annotated[int, Query(ge=0)] = 0,
-    limit: Annotated[int, Query(ge=1, le=100)] = 10,):
+    limit: Annotated[int, Query(ge=1, le=100)] = 10,
+    filters: CarFilter = Depends()
+    ):
 
-    total = count_items(db, Car)
-    query:str = query_builder(Car, skip, limit)
+
+    query:str = query_builder(Car, skip, limit, filters)
     cars = get_all(db, query)
+    total = count_items(db, Car, filters)
 
     has_more = skip + len(cars) < total
 
