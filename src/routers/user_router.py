@@ -114,7 +114,7 @@ async def delete_user(
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="user not found")
     
-    if current_user.email not in ('admin1@gmail.com', 'admin2@gmail.com'):
+    if current_user.role not in ('admin'):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to delete this user",
@@ -156,6 +156,9 @@ async def create_user(user: UserCreate, db: Annotated[Session, Depends(get_db)])
     new_user = User(
         email=user.email.lower(),
         password_hashed=hash_password(user.password),
+        lastname=user.lastname,
+        firstname=user.firstname,
+        role=user.role
     )
     db.add(new_user)
     db.commit()

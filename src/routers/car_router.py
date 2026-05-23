@@ -52,7 +52,7 @@ async def update_car_full(car_id: int, car_data: CarCreate, current_user: Curren
     if not car:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Car not found")
     
-    if current_user.email != "admin1@gmail.com":
+    if current_user.role != "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to delete this post",
@@ -84,7 +84,7 @@ async def delete_car(car_id: int,current_user: CurrentUser , db: Annotated[Sessi
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Car not found")
     
     
-    if current_user.email != "admin1@gmail.com":
+    if current_user.role != "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to delete this post",
@@ -100,7 +100,7 @@ async def delete_car(car_id: int,current_user: CurrentUser , db: Annotated[Sessi
 )
 async def create_car(carSchema: CarCreate,current_user: CurrentUser , db: Annotated[Session, Depends(get_db)]):
 
-    if current_user.email != "admin1@gmail.com":
+    if current_user.role != "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not authorized to update this post",
