@@ -7,3 +7,4 @@ class CarFilter:
     name: Annotated[Optional[str], Query()] = None
     price_max: Annotated[Optional[int], Query( ge=0)] = None
     km_max: Annotated[Optional[int], Query( ge=0)] = None
+    trade: Annotated[Optional[str], Query()] = None

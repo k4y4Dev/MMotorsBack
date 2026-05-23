@@ -5,6 +5,7 @@ class CarBase(BaseModel):
     price: int 
     km: int 
     image: str = Field(min_length=1, max_length=50)
+    trade: str = Field(min_length=1, max_length=50)
 
 
 class CarCreate(CarBase):
@@ -15,6 +16,7 @@ class CarUpdate(BaseModel):
     price: int | None = Field(default=None)
     km: int | None = Field(default=None)
     image: str | None = Field(default=None, min_length=1, max_length=50)
+    trade: str | None = Field(default=None, min_length=1, max_length=50)
     
 
 class CarResponse(CarBase):

@@ -50,6 +50,8 @@ def query_builder(
             query = query.where(model.price <= filters.price_max)
         if filters.km_max is not None:
             query = query.where(model.km <= filters.km_max)
+        if filters.trade is not None:
+            query = query.where(model.trade == filters.trade)
     return query
 
 def count_items(db: Session, model: Type[TModel]):
