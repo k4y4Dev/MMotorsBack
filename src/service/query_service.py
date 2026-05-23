@@ -46,12 +46,8 @@ def query_builder(
     if isinstance(filters, CarFilter):
         if filters.name is not None:
             query = query.where(model.name.ilike(f"%{filters.name}%"))
-        if filters.price_min is not None:
-            query = query.where(model.price >= filters.price_min)
         if filters.price_max is not None:
             query = query.where(model.price <= filters.price_max)
-        if filters.km_min is not None:
-            query = query.where(model.km >= filters.km_min)
         if filters.km_max is not None:
             query = query.where(model.km <= filters.km_max)
     return query

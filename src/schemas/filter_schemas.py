@@ -5,7 +5,5 @@ from dataclasses import dataclass
 @dataclass
 class CarFilter:
     name: Annotated[Optional[str], Query()] = None
-    price_min: Annotated[Optional[int], Query( ge=0)] = None
     price_max: Annotated[Optional[int], Query( ge=0)] = None
-    km_min: Annotated[Optional[int], Query( ge=0)] = None
     km_max: Annotated[Optional[int], Query( ge=0)] = None
