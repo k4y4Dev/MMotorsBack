@@ -214,6 +214,9 @@ async def login_for_access_token(
     return {
         "message": f"Bienvenue {user.email}",
         "user": {
-            "email": user.email
+            "email": user.email,
+            "lastname": user.lastname,
+            "firstname": user.firstname,
+            "role": user.role,
         }
     }
