@@ -2,6 +2,9 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 class UserBase(BaseModel):
     email: EmailStr = Field(max_length=120)
+    lastname: str = Field(max_length=120)
+    firstname: str = Field(max_length=120)
+    role: str = Field(max_length=120)
 
 
 class UserCreate(UserBase):
@@ -17,6 +20,9 @@ class UserPublic(BaseModel):
 
 class UserPrivate(BaseModel):
     email: EmailStr
+    lastname: str = Field(max_length=120)
+    firstname: str = Field(max_length=120)
+    role: str = Field(max_length=120)
 
 class LoginResponseModel(BaseModel):
     message: str
@@ -24,4 +30,7 @@ class LoginResponseModel(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    email: EmailStr | None = Field(default=None, max_length=120)
+    email: EmailStr = Field(max_length=120)
+    lastname: str = Field(max_length=120)
+    firstname: str = Field(max_length=120)
+    role: str = Field(max_length=120)
