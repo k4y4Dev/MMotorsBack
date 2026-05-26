@@ -49,6 +49,8 @@ Front End --> Angular 21 --> déployer sur Render
 Back End --> Rest API avec Fast Api --> déployer sur fly.io
 BDD --> local --> sqlite
     --> prod --> PostGressql --> fly.io
+Container --> Docker
+CI/CD --> github workflows 
 
 Test Coverage > 80% - Pytest
 commande --> pytest --cov=src
