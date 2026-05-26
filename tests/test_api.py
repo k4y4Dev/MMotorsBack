@@ -1,4 +1,6 @@
 from sqlalchemy.orm import Session, declarative_base, Mapped, mapped_column
+CAR_PAYLOAD = {"name": "Test Car", "price": 333, "km": 333, "image": "test.jpg", "trade": "leasing"}
+
 
 
 
@@ -19,9 +21,8 @@ def test_read_root(client):
 
 def test_create_car(admin_client):
     response = admin_client.post(
-        "/api/cars", json={
-            "name": "Test Car", "price": 333, "km": 333, "image": "test.jpg"
-        }
+        "/api/cars",
+        json=CAR_PAYLOAD,
     )
 
     assert response.status_code == 201, response.text

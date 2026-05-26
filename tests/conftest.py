@@ -6,26 +6,8 @@ from src.config.database import get_db, Base
 from src.models.user_model import User  # adapte l'import selon ton projet
 from src.service.auth_py import get_current_user  # ← la fonction, pas CurrentUser
 from main import app
+from tests.test_config import TestingSessionLocal, engine, override_get_db
 from .entity_test import MockBase, MockSchema
-
-DATABASE_URL = "sqlite:///:memory:"
-
-engine = create_engine(
-    DATABASE_URL,
-    connect_args={"check_same_thread": False},
-    poolclass=StaticPool,
-)
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-
-# ← Fonction standalone pour FastAPI, pas une fixture pytest
-def override_get_db():
-    db = TestingSessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 @pytest.fixture(autouse=True)
 def setup_database():
@@ -57,10 +39,13 @@ def client():
 
 
 # --- Utilisateur simulé standard ---
-def make_mock_user(email: str = "user@example.com") -> User:
+def make_mock_user(email: str = "user@example.com", role: str = "user") -> User:
     user = User()
     user.id = 1
     user.email = email
+    user.lastname = "Test"
+    user.firstname = "Jean"
+    user.role = role
     return user
 
 
@@ -68,7 +53,7 @@ def make_mock_user(email: str = "user@example.com") -> User:
 def auth_client(client):
     """Client authentifié en tant qu'utilisateur classique."""
     def mock_current_user():
-        return make_mock_user("user@example.com")  # pas admin → 403 sur create_car
+        return make_mock_user("user@example.com", role="user")  # pas admin → 403 sur create_car
 
     app.dependency_overrides[get_current_user] = mock_current_user  # ← clé correcte
     yield client
@@ -80,7 +65,7 @@ def auth_client(client):
 def admin_client(client):
     """Client authentifié en tant qu'admin (peut créer/modifier/supprimer)."""
     def mock_admin_user():
-        return make_mock_user("admin1@gmail.com")  # ← email hardcodé dans ton router
+        return make_mock_user("admin1@gmail.com", role="admin")  # ← email hardcodé dans ton router
 
     app.dependency_overrides[get_current_user] = mock_admin_user
     yield client

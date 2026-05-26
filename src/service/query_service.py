@@ -17,9 +17,13 @@ def get_item_by_id(db: Session, model: Type[TModel], item_id: int) -> Optional[T
     return result
 
 
-def get_all(db: Session, query: str) -> list[TModel]:
+def get_all(db: Session, model: Type[TModel]) -> list[TModel]:
+    query = select(model)
     result = db.execute(query).scalars().all()
     return result
+
+def get_all_filtered(db: Session, query) -> list:  
+    return db.execute(query).scalars().all()
 
 def item_updater(schema: TSchema,item: TModel , set_item: bool = False):
     item_to_update = schema.model_dump(exclude_unset=set_item)
@@ -65,6 +69,6 @@ def count_items(db: Session, model: Type[TModel], filters: Optional[TFilter] = N
             query = query.where(model.km <= filters.km_max)
         if filters.trade is not None:
             query = query.where(model.trade == filters.trade)
-    count_result = db.execute(select(func.count()).select_from(query))
+    count_result = db.execute(select(func.count()).select_from(query.subquery()))
     total = count_result.scalar() or 0
     return total
