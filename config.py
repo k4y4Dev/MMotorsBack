@@ -16,6 +16,13 @@ class Settings(BaseSettings):
     aws_region: str
     aws_bucket_name: str
 
+    connection_string: str
+    postgres_user: str
+    postgres_password: str
+    postgres_server: str
+    postgres_port: str
+    postgres_db: str
+
 
 
 settings = Settings()

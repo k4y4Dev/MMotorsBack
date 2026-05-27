@@ -1,10 +1,11 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
+from config import settings
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./mmotors.db"
+#SQLALCHEMY_DATABASE_URL = "sqlite:///./mmotors.db"
 
 #if psycopg3 psycopg[binary] --> new
-#SQLALCHEMY_DATABASE_URL = f'postgresql+psycopg://postgres:test123@127.0.0.1:5432/mmotors'
+SQLALCHEMY_DATABASE_URL = settings.connection_string
 
 #if psycopg2
 #pip uninstall psycopg psycopg-binary
@@ -14,13 +15,10 @@ SQLALCHEMY_DATABASE_URL = "sqlite:///./mmotors.db"
 
 
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False}
+    SQLALCHEMY_DATABASE_URL
+#    connect_args={"check_same_thread": False}
 )
 
-#engine = create_engine(
-#    SQLALCHEMY_DATABASE_URL
-#)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
