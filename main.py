@@ -8,8 +8,8 @@ from sqlalchemy.orm import Session
 
 
 from src.config.database import Base, engine, SessionLocal
-from src.config.seed import seed
-
+""" from src.config.seed import seed
+ """
 from src.routers import car_router, user_router, upload_router
 
 @asynccontextmanager
