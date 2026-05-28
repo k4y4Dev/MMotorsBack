@@ -26,6 +26,8 @@ jobs:
           pip install pytest httpx pytest-cov # Ajout de pytest-cov
 
       - name: Run tests with coverage
+        env:
+          APP_ENV: test
         run: |
           pytest --cov=app --cov-fail-under=80
 

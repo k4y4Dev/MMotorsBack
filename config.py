@@ -1,5 +1,8 @@
+import os
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+ENV = os.getenv("APP_ENV", "development")
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
