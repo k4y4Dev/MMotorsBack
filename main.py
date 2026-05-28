@@ -16,12 +16,14 @@ from src.routers import car_router, user_router, upload_router
 async def lifespan(_app:FastAPI):
 
     Base.metadata.create_all(bind=engine)
-    db = SessionLocal()
+    yield
+ #   db = SessionLocal()
 """     try:
         seed()  
     finally:
         db.close()
-    yield """
+"""
+
 
 
 
