@@ -17,11 +17,11 @@ async def lifespan(_app:FastAPI):
 
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
-    try:
-        seed()  # <- seed une seule fois
+"""     try:
+        seed()  
     finally:
         db.close()
-    yield
+    yield """
 
 
 
