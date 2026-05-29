@@ -31,6 +31,17 @@ async def lifespan(_app:FastAPI):
 #app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 app = FastAPI(lifespan=lifespan)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:4200",
+        "https://mmotorsfront.onrender.com"
+                   ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 @app.get("/", include_in_schema=False)
 def read_root():
