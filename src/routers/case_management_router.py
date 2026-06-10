@@ -28,15 +28,25 @@ router = APIRouter()
 @router.get("/",  response_model=list[AdminCaseManagementResponse])
 def get_all_cases(
     db: Session = Depends(get_db),
-    #current_user: User = Depends(get_current_user),  # user connecté
+    current_user: User = Depends(get_current_user),  # user connecté
 ):
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Accès réservé aux administrateurs."
+    )
     return get_all_active_cases(db)
 
 @router.get("/grouped", response_model=list[CarCaseSummary])
 def get_cases_by_car(
     db: Session = Depends(get_db),
-    # current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
 ):
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Accès réservé aux administrateurs."
+    )
     return get_cases_grouped_by_car(db)
 
 @router.get("/me/active", response_model=CaseManagementResponse)
