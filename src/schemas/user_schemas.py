@@ -34,3 +34,8 @@ class UserUpdate(BaseModel):
     lastname: str = Field(max_length=120)
     firstname: str = Field(max_length=120)
     role: str = Field(max_length=120)
+
+class UserCaseResponse(BaseModel):
+    email: EmailStr
+    lastname: str = Field(max_length=120)
+    firstname: str = Field(max_length=120)
