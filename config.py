@@ -26,7 +26,11 @@ class Settings(BaseSettings):
     postgres_port: str = "5432"
     postgres_db: str = "fake"
 
+    app_env: str = "development"  
+    cookie_domain: str = "localhost"
+    cookie_secure: bool = False
+    cookie_samesite: str = "lax"
+
 settings = Settings()
 
 
-settings = Settings()
