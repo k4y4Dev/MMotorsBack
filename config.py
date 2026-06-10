@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     postgres_db: str = "fake"
 
     app_env: str = "development"  
-    cookie_domain: str = "localhost"
+    cookie_domain: str | None = "localhost"
     cookie_secure: bool = False
     cookie_samesite: str = "lax"
 
