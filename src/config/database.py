@@ -14,7 +14,10 @@ if APP_ENV == "test":
     )
 elif APP_ENV == "production":
     SQLALCHEMY_DATABASE_URL = settings.connection_string
-    engine = create_engine(SQLALCHEMY_DATABASE_URL)
+    engine = create_engine(SQLALCHEMY_DATABASE_URL,
+                               pool_size=2,        
+                                max_overflow=0, 
+                                )
 else:
 #    SQLALCHEMY_DATABASE_URL = settings.connection_string
     SQLALCHEMY_DATABASE_URL = 'postgresql+psycopg://postgres:test123@127.0.0.1:5432/mmotors'
