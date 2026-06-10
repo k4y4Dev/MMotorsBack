@@ -12,8 +12,12 @@ if APP_ENV == "test":
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
-else:
+elif APP_ENV == "production":
     SQLALCHEMY_DATABASE_URL = settings.connection_string
+    engine = create_engine(SQLALCHEMY_DATABASE_URL)
+else:
+#    SQLALCHEMY_DATABASE_URL = settings.connection_string
+    SQLALCHEMY_DATABASE_URL = 'postgresql+psycopg://postgres:test123@127.0.0.1:5432/mmotors'
     engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

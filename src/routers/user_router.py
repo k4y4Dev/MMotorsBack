@@ -204,11 +204,11 @@ async def login_for_access_token(
         key="auth_token",
         value=access_token,
         httponly=True,
-        samesite="lax",
-        secure=False,
+        samesite=settings.cookie_samesite,
+        secure=settings.cookie_secure,
         expires=expire_date,
         max_age=max_age_seconds,
-        domain="localhost"
+        domain=settings.cookie_domain,
         
     )
     return {
