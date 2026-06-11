@@ -26,10 +26,14 @@ class Settings(BaseSettings):
     postgres_port: str = "5432"
     postgres_db: str = "fake"
 
-    app_env: str = "development"  
+    app_env: str = ENV  
     cookie_domain: str | None = "localhost"
     cookie_secure: bool = False
     cookie_samesite: str = "lax"
+
+    @property
+    def is_production(self) -> bool:
+        return self.app_env == "production"
 
 settings = Settings()
 
