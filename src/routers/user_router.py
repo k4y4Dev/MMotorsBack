@@ -208,7 +208,7 @@ async def login_for_access_token(
         secure=settings.cookie_secure,
         expires=expire_date,
         max_age=max_age_seconds,
-        domain=settings.cookie_domain,
+        domain=None if settings.is_production else settings.cookie_domain,
         
     )
     return {
