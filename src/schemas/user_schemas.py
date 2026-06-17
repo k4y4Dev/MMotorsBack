@@ -1,4 +1,5 @@
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from src.schemas.user_docs_schema import DocLinkResponse
 
 class UserBase(BaseModel):
     email: EmailStr = Field(max_length=120)
@@ -39,3 +40,12 @@ class UserCaseResponse(BaseModel):
     email: EmailStr
     lastname: str = Field(max_length=120)
     firstname: str = Field(max_length=120)
+
+class UserCaseResponseProfile(BaseModel):
+    
+    id: int
+    email: EmailStr = Field(max_length=120)
+    lastname: str = Field(max_length=120)
+    firstname: str = Field(max_length=120)
+    role: str = Field(max_length=120)
+    doc_links: list[DocLinkResponse] = []
