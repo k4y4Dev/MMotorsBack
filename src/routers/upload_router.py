@@ -36,12 +36,14 @@ async def upload_image(
     # Vérification de la taille
     if len(contents) > MAX_SIZE:
         raise HTTPException(400, "Fichier trop volumineux. Maximum 5MB.")
+    
 
     # Nom unique pour éviter les conflits
     folder = f"documents/{current_user.id}/{doc_type.value}" if folder_name == "documents" else "cars"
-    filename = f"{folder}/{uuid.uuid4()}.jpg"
+    filename = f"{uuid.uuid4()}.jpg"
+    fullPath = f"{folder}/{filename}"
 
-    url = s3_service.upload_image(contents, filename, file.content_type)
+    url = s3_service.upload_image(contents, fullPath, file.content_type)
 
     if folder_name == "documents":
         user_doc = UserDoc(
@@ -66,7 +68,7 @@ async def get_car(id: int, db: Session = Depends(get_db)):
     
     return car """
 @router.get("/{filename}")
-async def get_car(
+async def get_file(
     current_user: CurrentUser, 
     filename: str,
     normal_user_email: str = "",
@@ -99,3 +101,23 @@ async def get_car(
         image_url = s3_service.generate_url(f"{full_path}")
     
     return image_url
+
+
+@router.delete("/{filename}")
+async def delete_image(
+    current_user: CurrentUser, 
+    filename: str,
+    normal_user_email: str = "",
+    doc_type: DocType = "doc1",  
+    folderName: str = "cars",
+    db: Session = Depends(get_db),
+
+
+    ):
+    # Génère une URL fraîche valable 1h
+    if filename != "":
+        folder = f"documents/{current_user.id}/{doc_type.value}" if folderName == "documents" else "cars"
+        full_path = f"{folder}/{filename}"
+        s3_service.delete_image(f"{full_path}")
+    
+    return "Image deleted"

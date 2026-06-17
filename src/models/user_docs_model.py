@@ -20,4 +20,4 @@ class UserDoc(Base):
     doc_url: Mapped[str] = mapped_column(String(255), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
 
-    user: Mapped["User"] = relationship("User", back_populates="doc_list")
+    user: Mapped["User"] = relationship("User", back_populates="doc_links")

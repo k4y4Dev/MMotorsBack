@@ -20,7 +20,7 @@ class User(Base):
     firstname: Mapped[str] = mapped_column(String(200), nullable=False)
     role: Mapped[str] = mapped_column(String(100), nullable=False)
     
-    doc_list: Mapped[list["UserDoc"]] = relationship(
+    doc_links: Mapped[list["UserDoc"]] = relationship(
         "UserDoc",
         back_populates="user",
         cascade="all, delete-orphan"

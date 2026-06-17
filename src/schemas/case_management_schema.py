@@ -26,7 +26,7 @@ class CaseManagementResponse(BaseModel):
     user_id: int
     car: CarResponse
     status: CaseStatus
-    doc_links: list[DocLinkResponse]
+#    doc_links: list[DocLinkResponse]
     created_at: datetime
     updated_at: datetime
 
