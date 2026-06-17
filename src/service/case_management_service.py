@@ -45,6 +45,16 @@ def get_cases_grouped_by_car(db: Session) -> list[dict]:
                     "lastname": c.user.lastname,
                     "firstname": c.user.firstname,
                     "status": c.status,
+                    "doc_links": [
+                        {
+                            "id": doc.id,
+                            "user_id": doc.user_id,
+                            "doc_type": doc.doc_type,
+                            "doc_url": doc.doc_url,
+                            "created_at": doc.created_at,
+                        }
+                        for doc in c.user.doc_list
+                    ],
                     "created_at": c.created_at,
                 }
                 for c in group_list

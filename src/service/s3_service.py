@@ -38,7 +38,7 @@ class S3Service:
         buffer = self.compress_image(contents, content_type)
 
         # Upload vers S3
-        key = f"cars/{filename}"
+        key = f"{filename}"
         self.s3.upload_fileobj(
             buffer,
             self.bucket,

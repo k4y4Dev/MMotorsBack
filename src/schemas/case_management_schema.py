@@ -4,6 +4,7 @@ from datetime import datetime
 from enum import Enum
 from src.schemas.car_schemas import CarResponse
 from src.schemas.user_schemas import UserCaseResponse
+from src.schemas.user_docs_schema import DocLinkResponse
 
 class CaseStatus(str, Enum):
     PENDING    = "pending"           # En attente
@@ -25,6 +26,7 @@ class CaseManagementResponse(BaseModel):
     user_id: int
     car: CarResponse
     status: CaseStatus
+    doc_links: list[DocLinkResponse]
     created_at: datetime
     updated_at: datetime
 
@@ -45,6 +47,7 @@ class CaseUserSummary(BaseModel):
     lastname: str
     firstname: str
     status: CaseStatus
+    doc_links: list[DocLinkResponse]
     created_at: datetime
 
 class CarCaseSummary(BaseModel):
