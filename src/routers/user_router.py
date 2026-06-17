@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import func, select
 
-from src.schemas.user_schemas import UserCreate, UserPublic, UserUpdate, UserPrivate, LoginResponseModel
+from src.schemas.user_schemas import UserCreate, UserPublic, UserUpdate, UserPrivate, LoginResponseModel, UserCaseResponseProfile
 from src.schemas.token_schemas import Token
 from src.models.user_model import User
 from src.config.database import Base, engine, get_db
@@ -62,7 +62,7 @@ async def get_current_user(
 
 
 """ 2nd version """
-@router.get("/me", response_model=UserPrivate)
+@router.get("/me", response_model=UserCaseResponseProfile)
 async def get_current_user(
     current_user:CurrentUser
 ):
@@ -70,7 +70,7 @@ async def get_current_user(
 
 
 
-@router.get("/{user_id}", response_model=UserPublic)
+@router.get("/{user_id}", response_model=UserCaseResponseProfile)
 async def get_user(user_id: int, db: Annotated[Session, Depends(get_db)]):
     user = get_item_by_id(db, User, user_id)
     if user:
@@ -220,3 +220,12 @@ async def login_for_access_token(
             "role": user.role,
         }
     }
+
+@router.post("/logout")
+def logout(response: Response):
+    response.delete_cookie(
+        key="auth_token",
+        httponly=True,
+        samesite=settings.cookie_samesite,
+    )
+    return {"message": "Déconnecté"}

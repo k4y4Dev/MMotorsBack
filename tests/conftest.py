@@ -7,11 +7,12 @@ from src.models.user_model import User  # adapte l'import selon ton projet
 from src.service.auth_py import get_current_user  # ← la fonction, pas CurrentUser
 from main import app
 from tests.test_config import TestingSessionLocal, engine, override_get_db
-from .entity_test import MockBase, MockSchema
+from .entity_test import MockBase, MockSchema, MockDeclarativeBase 
 
 @pytest.fixture(autouse=True)
 def setup_database():
     Base.metadata.create_all(bind=engine)
+    MockDeclarativeBase .metadata.create_all(bind=engine)
 
     session = TestingSessionLocal()
     test_item = MockBase(id=50, name="Test", price=365)
@@ -21,6 +22,7 @@ def setup_database():
 
     yield
     Base.metadata.drop_all(bind=engine)
+    MockDeclarativeBase .metadata.drop_all(bind=engine)
 
 @pytest.fixture
 def db():
