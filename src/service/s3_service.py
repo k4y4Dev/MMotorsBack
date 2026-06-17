@@ -38,7 +38,7 @@ class S3Service:
         buffer = self.compress_image(contents, content_type)
 
         # Upload vers S3
-        key = f"cars/{filename}"
+        key = f"{filename}"
         self.s3.upload_fileobj(
             buffer,
             self.bucket,
@@ -57,7 +57,7 @@ class S3Service:
     def delete_image(self, filename: str):
         self.s3.delete_object(
             Bucket=self.bucket,
-            Key=f"cars/{filename}"
+            key = f"{filename}"
         )
 
     def generate_url(self, filename: str) -> str:

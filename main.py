@@ -8,21 +8,21 @@ from sqlalchemy.orm import Session
 
 
 from src.config.database import Base, engine, SessionLocal
-""" from src.config.seed import seed
- """
+# from src.config.seed import seed
+
 from src.routers import car_router, user_router, upload_router, case_management_router
 
 @asynccontextmanager
 async def lifespan(_app:FastAPI):
 
     Base.metadata.create_all(bind=engine)
-    yield
+
  #   db = SessionLocal()
-"""     try:
-        seed()  
-    finally:
-        db.close()
-"""
+#    try:
+#        seed()  
+#    finally:
+#        db.close()
+    yield
 
 
 
