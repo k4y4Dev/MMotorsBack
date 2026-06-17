@@ -53,7 +53,7 @@ def get_cases_grouped_by_car(db: Session) -> list[dict]:
                             "doc_url": doc.doc_url,
                             "created_at": doc.created_at,
                         }
-                        for doc in c.user.doc_list
+                        for doc in c.user.doc_links
                     ],
                     "created_at": c.created_at,
                 }
